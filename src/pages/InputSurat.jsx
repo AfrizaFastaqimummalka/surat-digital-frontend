@@ -31,6 +31,7 @@ export default function InputSurat() {
       await api.post("/surat", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      alert("Surat berhasil disimpan!");
       navigate("/surat");
     } catch (err) {
       console.error(err);
