@@ -81,10 +81,22 @@ export default function Dashboard() {
     ];
   }
 
+  const colsCount = Math.min(cards.length, 5);
+  const gridColsClass =
+    colsCount === 1
+      ? "lg:grid-cols-1"
+      : colsCount === 2
+      ? "lg:grid-cols-2"
+      : colsCount === 3
+      ? "lg:grid-cols-3"
+      : colsCount === 4
+      ? "lg:grid-cols-4"
+      : "lg:grid-cols-5";
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Dashboard</h1>
-      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${Math.min(cards.length, 5)} gap-4`}>
+      <div className={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-4`}>
         {cards.map((card, idx) => (
           <div
             key={idx}
