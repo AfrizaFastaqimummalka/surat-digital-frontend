@@ -17,22 +17,29 @@ export default function InputSurat() {
     const { name, value, files } = e.target;
     setForm({ ...form, [name]: files ? files[0] : value });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     const data = new FormData();
-    Object.keys(form).forEach((k) => data.append(k, form[k]));
+    Object.keys(form).forEach((k) => {
+      if (form[k] !== null && form[k] !== undefined) {
+        data.append(k, form[k]);
+      }
+    });
     try {
       await api.post("/surat", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       navigate("/surat");
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Gagal input surat");
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Input Surat</h1>

@@ -1,21 +1,59 @@
 import React, { useState } from "react";
 import api from "../services/api";
-import { saveAs } from "file-saver";
 import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function LaporanExport() {
   const [loading, setLoading] = useState(false);
   const [periode, setPeriode] = useState({ start: "", end: "" });
 
   const exportPDF = async () => {
+    if (!periode.start || !periode.end) {
+      alert("Silakan pilih periode tanggal terlebih dahulu");
+      return;
+    }
     setLoading(true);
     try {
       const res = await api.get(
-        `/laporan/pdf?startDate=${periode.start}&endDate=${periode.end}`,
-        { responseType: "blob" },
+        `/surat?startDate=${periode.start}&endDate=${periode.end}`
       );
-      saveAs(res.data, `laporan_surat_${periode.start}_to_${periode.end}.pdf`);
-    } catch {
+      const suratList = res.data;
+
+      if (!suratList || suratList.length === 0) {
+        alert("Tidak ada data surat pada periode ini");
+        return;
+      }
+
+      const doc = new jsPDF();
+
+      // Title & Metadata
+      doc.setFontSize(16);
+      doc.text("LAPORAN DATA SURAT DIGITAL", 14, 20);
+      doc.setFontSize(10);
+      doc.text(`Periode: ${periode.start} s/d ${periode.end}`, 14, 28);
+      doc.text(`Dicetak pada: ${new Date().toLocaleString("id-ID")}`, 14, 34);
+
+      // Generate Table
+      autoTable(doc, {
+        startY: 40,
+        head: [["No. Surat", "Jenis", "Pengirim/Tujuan", "Perihal", "Tanggal Surat", "Status"]],
+        body: suratList.map((s) => [
+          s.nomorSurat,
+          s.jenis === "masuk" ? "Masuk" : "Keluar",
+          s.pengirimTujuan,
+          s.perihal,
+          new Date(s.tanggalSurat).toLocaleDateString("id-ID"),
+          s.status.toUpperCase(),
+        ]),
+        theme: "striped",
+        headStyles: { fillColor: [30, 64, 175] },
+        styles: { fontSize: 9, cellPadding: 3 },
+      });
+
+      doc.save(`laporan_surat_${periode.start}_to_${periode.end}.pdf`);
+    } catch (err) {
+      console.error(err);
       alert("Gagal export PDF");
     } finally {
       setLoading(false);
@@ -36,6 +74,7 @@ export default function LaporanExport() {
             <input
               type="date"
               className="border rounded-lg px-3 py-2"
+              value={periode.start}
               onChange={(e) =>
                 setPeriode({ ...periode, start: e.target.value })
               }
@@ -48,6 +87,7 @@ export default function LaporanExport() {
             <input
               type="date"
               className="border rounded-lg px-3 py-2"
+              value={periode.end}
               onChange={(e) => setPeriode({ ...periode, end: e.target.value })}
             />
           </div>

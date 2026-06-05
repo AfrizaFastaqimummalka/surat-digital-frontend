@@ -123,39 +123,41 @@ export default function UserManagement() {
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left">Nama</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th className="text-center">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td className="px-6 py-4">{user.nama}</td>
-                <td className="px-6 py-4">{user.email}</td>
-                <td className="px-6 py-4 capitalize">{user.role}</td>
-                <td className="px-6 py-4 text-center space-x-2">
-                  <button
-                    onClick={() => handleEdit(user)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    <PencilIcon className="w-5 h-5 inline" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    <TrashIcon className="w-5 h-5 inline" />
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
+                <th className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider font-bold">Aksi</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200 bg-white">
+              {users.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.nama}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm capitalize text-gray-600">{user.role}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm space-x-2">
+                    <button
+                      onClick={() => handleEdit(user)}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <PencilIcon className="w-5 h-5 inline" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(user.id)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <TrashIcon className="w-5 h-5 inline" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
